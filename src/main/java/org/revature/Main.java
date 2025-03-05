@@ -39,10 +39,14 @@ public class Main {
         app.get("/users", usersController::getAllUsersHandler); //See all users
         app.post("/users", usersController::addUserHandler); //Create user
         app.put("/users/{user_id}", usersController::updateUserHandler); //Update user
+        app.get("/user/{user_id}", usersController::getUserInfoWithIdHandler); //See specific user
 
         app.get("/loans", loanController::getAllLoansHandler); //see all loans
         app.post("/loans", loanController::addLoanHandler); //add user
         app.put("/loans/{loan_id}", loanController::updateLoanHandler); //update loan
+        app.get("/loan/{loan_id}",loanController::getLoanInfoWithIdHandler); //See specific loan
+        //app.put("/loan/{loan_id}/approve", loanController::approveLoanHandler);
+        //app.put("/loan/{loan_id}/reject", loanController::rejectLoanHandler);
 
     }
 }

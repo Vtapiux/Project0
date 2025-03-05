@@ -24,4 +24,8 @@ public class UsersService {
     public void updateUser(Users user){
         usersDAO.updateUser(user);
     }
+
+    public Users getUserInfoWithId(int user_id){
+        return usersDAO.getUserInfoWithId(user_id);
+    }
 }

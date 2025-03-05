@@ -4,7 +4,7 @@ public class Account {
     private int account_id;
     private String username;
     private String password;
-
+    private int role_id;
 
 
     public int getAccount_id() {
@@ -29,5 +29,13 @@ public class Account {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(int role_id) {
+        this.role_id = role_id;
     }
 }

@@ -47,4 +47,14 @@ public class LoanController {
         ctx.status(200).json("{\"message\":\"Loan updated\"}");
 
     }
+
+    public void getLoanInfoWithIdHandler(Context ctx){
+        int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
+        Loan loan = loanService.getLoanInfoWithId(loanId);
+        if(loan == null){
+            ctx.status(404).json("{\"message\":\"Loan not found\"}");
+        } else {
+            ctx.json(loan);
+        }
+    }
 }

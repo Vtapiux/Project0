@@ -119,13 +119,14 @@ public class AuthController {
     }
 
     public static boolean createAccountInDB(Account account){
-        String sql = "INSERT INTO Account (username, password) VALUES (?, ?);";
+        String sql = "INSERT INTO Account (username, password, role_id) VALUES (?, ?, ?);";
         Connection connection = ConnectionUtil.getConnection();
 
         try{
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, account.getUsername());
             stmt.setString(2, account.getPassword());
+            stmt.setInt(3, account.getRole_id());
             int rows = stmt.executeUpdate();
             return rows > 0;
         }catch(SQLException e){
@@ -147,6 +148,7 @@ public class AuthController {
                 acc.setAccount_id(rs.getInt("account_id"));
                 acc.setUsername(rs.getString("username"));
                 acc.setPassword(rs.getString("password"));
+                acc.setRole_id(rs.getInt("role_id"));
                 return acc;
             }
             return null;

@@ -43,6 +43,15 @@ public class UsersController {
 
         usersService.updateUser(user);
         ctx.status(200).json("{\"message\":\"User updated\"}");
+    }
 
+    public void getUserInfoWithIdHandler(Context ctx){
+        int userId = Integer.parseInt(ctx.pathParam("user_id"));
+        Users user = usersService.getUserInfoWithId(userId);
+        if(user == null){
+            ctx.status(404).json("{\"message\":\"User not found\"}");
+        } else {
+            ctx.json(user);
+        }
     }
 }

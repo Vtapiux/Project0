@@ -47,6 +47,8 @@ public class Loan {
 
     public String getStatus() {return status;}
     public void setStatus(String status) {this.status = status;}
+    //public void approveStatus() {this.status = "Approved";}
+    //public void rejectStatus() {this.status = "Rejected";}
 
     public LocalDate getAppliedDate() {return appliedDate;}
     public void setAppliedDate(LocalDate appliedDate) {this.appliedDate = appliedDate;}

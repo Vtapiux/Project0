@@ -23,4 +23,8 @@ public class LoanService {
     public void updateLoan(Loan loan){
         loanDAO.updateLoan(loan);
     }
+
+    public Loan getLoanInfoWithId(int loan_id){
+        return loanDAO.getLoanInfoWithId(loan_id);
+    }
 }

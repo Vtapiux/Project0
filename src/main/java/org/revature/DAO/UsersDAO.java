@@ -31,7 +31,6 @@ public class UsersDAO {
                         rs.getString("last_name"),
                         rs.getString("email"),
                         rs.getString("phone_number"),
-                        rs.getInt("role_id"),
                         createdAt,
                         rs.getInt("address_id"),
                         rs.getInt("account_id"));
@@ -86,4 +85,31 @@ public class UsersDAO {
         }
     }
 
+    public Users getUserInfoWithId(int userId){
+        Connection connection = ConnectionUtil.getConnection();
+        Users user = null;
+        try {
+            String sql = "SELECT * FROM Users WHERE user_id = ?;";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if(rs.next()){
+                Date sqlDate = rs.getDate("created_at");
+                LocalDate createdAt = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+
+                 user = new Users(rs.getInt("user_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        createdAt,
+                        rs.getInt("address_id"),
+                        rs.getInt("account_id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return user;
+    }
 }
