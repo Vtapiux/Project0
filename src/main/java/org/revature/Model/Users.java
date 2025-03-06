@@ -17,13 +17,12 @@ public class Users {
 
     public Users (){ }
 
-    public Users(int userId, String firstName, String lastName, String email, String phoneNumber, LocalDate createdAt, int addressId, int accountId) {
+    public Users(int userId, String firstName, String lastName, String email, String phoneNumber, int addressId, int accountId) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.createdAt = createdAt;
         this.addressId = addressId;
         this.accountId = accountId;
     }

@@ -3,21 +3,46 @@ package org.revature.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
+import jakarta.servlet.http.HttpSession; //User role validation
+import org.revature.DAO.UsersDAO;
 import org.revature.DTO.UserDTO;
+import org.revature.Model.Account; //User role validation
 import org.revature.Model.Users;
 import org.revature.Service.UsersService;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class UsersController {
     UsersService usersService;
+    AuthController authController;
 
     public UsersController(UsersService usersService) {
         this.usersService = usersService;
+        this.authController = new AuthController();
     }
 
-    public void getAllUsersHandler (Context ctx){
-        ctx.json(usersService.getAllUsers());
+    public UsersController (){
+        this.usersService = new UsersService();
+        this.authController = new AuthController();
     }
+
+    public void getAllUsersHandler(Context ctx) {
+
+        HttpSession session = ctx.req().getSession(false);
+        if (session == null || session.getAttribute("account") == null) {
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
+            return;
+        }
+
+        Account account = (Account)session.getAttribute("account");
+        if (account.getRoleId() != 1) {
+            ctx.status(403).json("{\"error\":\"Forbidden: Insufficient permissions\"}");
+            return;
+        }
+
+        ctx.json(usersService.getAllUsers(account));
+    }
+
 
     public void addUserHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -30,8 +55,29 @@ public class UsersController {
         }
     }
 
+    public void addUserInfoHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Users user = mapper.readValue(ctx.body(), Users.class);
+
+        // Validate required fields
+        if (user.getAccountId() == 0 || user.getFirstName() == null || user.getLastName() == null) {
+            ctx.status(400).json("{\"error\":\"Missing required fields\"}");
+            return;
+        }
+
+        // Use the service to add the user
+        Users addedUser = usersService.addUser(user);
+
+        // Handle the response based on the outcome
+        if (addedUser == null) {
+            ctx.status(500).json("{\"error\":\"Failed to add user information\"}");
+        } else {
+            ctx.status(201).json("{\"message\":\"User information added\", \"userId\":" + addedUser.getUserId() + "}");
+        }
+    }
+
     public void updateUserHandler(Context ctx){
-        int userId = Integer.parseInt(ctx.pathParam("user_id"));
+        int userId = Integer.parseInt(ctx.pathParam("userId"));
         UserDTO request = ctx.bodyAsClass(UserDTO.class);
 
         Users user = new Users();
@@ -46,12 +92,30 @@ public class UsersController {
     }
 
     public void getUserInfoWithIdHandler(Context ctx){
-        int userId = Integer.parseInt(ctx.pathParam("user_id"));
-        Users user = usersService.getUserInfoWithId(userId);
-        if(user == null){
-            ctx.status(404).json("{\"message\":\"User not found\"}");
-        } else {
-            ctx.json(user);
+        if(authController.checkLogin(ctx)){
+            int userId = Integer.parseInt(ctx.pathParam("userId"));
+            if(authController.getRole(ctx) == 1) {
+                if(authController.getUserID(ctx) == userId){
+                    Users user = usersService.getUserInfoWithId(userId);
+                    if(user == null){
+                        ctx.status(404).json("{\"message\":\"User not found\"}");
+                    } else {
+                        ctx.json(user);
+                    }
+                } else { // compare userId's -> User is different to session
+                    ctx.status(403).json("{\"error\":\"You do not have permission to see this user.\"}");
+                }
+            } else{ //get role else -> is manager
+                Users user = usersService.getUserInfoWithId(userId);
+                if(user == null){
+                    ctx.status(404).json("{\"message\":\"User not found\"}");
+                } else {
+                    ctx.json(user);
+                }
+            }
+        } else { //check login else
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
         }
+
     }
 }

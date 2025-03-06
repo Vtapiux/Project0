@@ -6,11 +6,15 @@ import org.revature.Model.Loan;
 import java.util.List;
 
 public class LoanService {
-    LoanDAO loanDAO;
+    private LoanDAO loanDAO;
 
-    public LoanService() { loanDAO = new LoanDAO(); }
+    public LoanService() {
+        loanDAO = new LoanDAO();
+    }
 
-    public LoanService( LoanDAO loanDAO ) { this.loanDAO = loanDAO; }
+    public LoanService( LoanDAO loanDAO ) {
+        this.loanDAO = loanDAO;
+    }
 
     public Loan addLoan(Loan newLoan){
         return loanDAO.insertLoan(newLoan);
@@ -26,5 +30,9 @@ public class LoanService {
 
     public Loan getLoanInfoWithId(int loan_id){
         return loanDAO.getLoanInfoWithId(loan_id);
+    }
+
+    public void updateStatus(Loan loan){
+        loanDAO.updateStatus(loan);
     }
 }

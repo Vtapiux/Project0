@@ -1,16 +1,12 @@
-package org.revature.Model;
+package org.revature.DTO;
 
-public class Address {
-    private int addressId;
+public class AddressDTO {
     private String country;
     private String state;
     private String city;
     private String street;
     private int streetNum;
     private String zip;
-
-    public int getAddressId() {return addressId;}
-    public void setAddressId(int addressId) {this.addressId = addressId;}
 
     public String getCountry() {return country;}
     public void setCountry(String country) {this.country = country;}
@@ -29,4 +25,5 @@ public class Address {
 
     public String getZip() {return zip;}
     public void setZip(String zip) {this.zip = zip;}
+
 }

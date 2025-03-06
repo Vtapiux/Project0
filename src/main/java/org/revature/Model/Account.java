@@ -1,18 +1,17 @@
 package org.revature.Model;
 
 public class Account {
-    private int account_id;
+    private int accountId;
     private String username;
     private String password;
-    private int role_id;
-
+    private int roleId;
 
     public int getAccount_id() {
-        return account_id;
+        return accountId;
     }
 
     public void setAccount_id(int account_id) {
-        this.account_id = account_id;
+        this.accountId = account_id;
     }
 
     public String getUsername() {
@@ -31,11 +30,11 @@ public class Account {
         this.password = password;
     }
 
-    public int getRole_id() {
-        return role_id;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(int role_id) {
-        this.role_id = role_id;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 }

@@ -1,6 +1,7 @@
 package org.revature.Service;
 
 import org.revature.DAO.UsersDAO;
+import org.revature.Model.Account;
 import org.revature.Model.Users;
 
 import java.util.List;
@@ -17,15 +18,21 @@ public class UsersService {
         return usersDAO.insertUser(user);
     }
 
-    public List<Users> getAllUsers(){
-        return usersDAO.getAllUsers();
+    public List<Users> getAllUsers(Account account){
+        return usersDAO.getAllUsers(account);
     }
 
     public void updateUser(Users user){
         usersDAO.updateUser(user);
     }
 
-    public Users getUserInfoWithId(int user_id){
-        return usersDAO.getUserInfoWithId(user_id);
+    public Users getUserInfoWithId(int user_id){return usersDAO.getUserInfoWithId(user_id);}
+
+    public Users getUserByAccountId(int accountId) {
+        return usersDAO.getUserByAccountId(accountId);
+    }
+
+    public void updateAddressId(int addressId, int userId) {
+        usersDAO.updateAddressIdInUsers(addressId, userId);
     }
 }

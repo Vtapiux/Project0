@@ -1,14 +1,19 @@
 package org.revature;
 
 import io.javalin.Javalin;
+import org.revature.Controller.AddressController;
 import org.revature.Controller.AuthController;
 import org.revature.Controller.LoanController;
 import org.revature.Controller.UsersController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.json.JavalinJackson;
+import org.revature.DAO.AddressDAO;
+import org.revature.DAO.AuthDAO;
 import org.revature.DAO.LoanDAO;
 import org.revature.DAO.UsersDAO;
+import org.revature.Service.AddressService;
+import org.revature.Service.AuthService;
 import org.revature.Service.LoanService;
 import org.revature.Service.UsersService;
 
@@ -26,27 +31,40 @@ public class Main {
         LoanService loanService = new LoanService(loanDAO);
         LoanController loanController = new LoanController(loanService);
 
+        AuthDAO authDAO = new AuthDAO();
+        AuthService authService = new AuthService(authDAO);
+        AuthController authController = new AuthController(authService);
+
+        AddressDAO addressDAO = new AddressDAO();
+        AddressService addressService = new AddressService(addressDAO);
+        AddressController addressController = new AddressController(addressService);
+
         Javalin app = Javalin.create(config -> {
             //support for LocalDate through Jackson
             config.jsonMapper(new JavalinJackson());
         }).start(7070);
 
-        app.post("/auth/register", AuthController::register);
-        app.post("/auth/login", AuthController::login);
-        app.get("/check", AuthController::checkLogin);
-        app.post("/auth/logout", AuthController::logout);
+        app.post("/auth/register", authController::register);
+        app.post("/auth/login", authController::login);
+        app.get("/check", authController::checkLogin);
+        app.post("/auth/logout", authController::logout);
 
         app.get("/users", usersController::getAllUsersHandler); //See all users
-        app.post("/users", usersController::addUserHandler); //Create user
-        app.put("/users/{user_id}", usersController::updateUserHandler); //Update user
-        app.get("/user/{user_id}", usersController::getUserInfoWithIdHandler); //See specific user
 
+        app.get("/user/{userId}", usersController::getUserInfoWithIdHandler); //See specific user
+        app.put("/users/{userId}", usersController::updateUserHandler); //Update user
+
+        app.post("/loans", loanController::addLoanHandler); //create loan
         app.get("/loans", loanController::getAllLoansHandler); //see all loans
-        app.post("/loans", loanController::addLoanHandler); //add user
-        app.put("/loans/{loan_id}", loanController::updateLoanHandler); //update loan
-        app.get("/loan/{loan_id}",loanController::getLoanInfoWithIdHandler); //See specific loan
-        //app.put("/loan/{loan_id}/approve", loanController::approveLoanHandler);
-        //app.put("/loan/{loan_id}/reject", loanController::rejectLoanHandler);
+        app.get("/loan/{loanId}",loanController::getLoanInfoWithIdHandler); //See specific loan
+        app.put("/loans/{loanId}", loanController::updateLoanHandler); //update loan
+        app.put("/loan/{loanId}/status", loanController::updateStatusHandler); //Update loan status
+
+        app.post("/address", addressController::addAddressHandler);
+
+        //app.post("/payment", paymentController::createPaymentHandler);
+        //app.get("/payment", paymentController::getAllPaymentHandler);
+        //app.get("/payment/{paymentId}", paymentController::getPaymentWithIdHandler);
 
     }
 }

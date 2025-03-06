@@ -9,8 +9,9 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String phoneNumber;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate createdAt;
+    private int addressId;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+//    private LocalDate createdAt;
 
     //Getters and Setters
     public int getUserId() {return userId;}
@@ -28,6 +29,13 @@ public class UserDTO {
     public String getPhoneNumber() {return phoneNumber;}
     public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
 
-    public LocalDate getCreatedAt() {return createdAt;}
-    public void setCreatedAt(LocalDate createdAt) {this.createdAt = createdAt;}
+    public int getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(int addressId) {
+        this.addressId = addressId;
+    }
+    //    public LocalDate getCreatedAt() {return createdAt;}
+//    public void setCreatedAt(LocalDate createdAt) {this.createdAt = createdAt;}
 }

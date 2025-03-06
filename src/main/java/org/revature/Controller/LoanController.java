@@ -8,29 +8,81 @@ import org.revature.Model.Loan;
 import org.revature.Service.LoanService;
 
 public class LoanController {
-    LoanService loanService;
+    private LoanService loanService;
+    private AuthController authController;
 
     public LoanController(LoanService loanService){
         this.loanService = loanService;
+        this.authController = new AuthController();
     }
 
     public void getAllLoansHandler (Context ctx){
-        ctx.json(loanService.getAllLoans());
+        if(authController.checkLogin(ctx)){
+            if(authController.getRole(ctx) == 2){ //Only manager can see ALL loans
+                ctx.json(loanService.getAllLoans());
+            }else {
+                ctx.status(403).json("{\"error\":\"\"You do not have permission to perform this action.\"\"}");
+            }
+        }else{
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
+        }
     }
 
     public void addLoanHandler (Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Loan loan = mapper.readValue(ctx.body(), Loan.class);
-        Loan addedLoan = loanService.addLoan(loan);
-
-        if(addedLoan==null){
-            ctx.status(400);
+        if(authController.checkLogin(ctx)){
+            if(authController.getRole(ctx) == 1){ //Only normal users can create a loan
+                ObjectMapper mapper = new ObjectMapper();
+                Loan loan = mapper.readValue(ctx.body(), Loan.class);
+                Loan addedLoan = loanService.addLoan(loan);
+                if(addedLoan==null){
+                    ctx.status(400);
+                }else{
+                    ctx.json(mapper.writeValueAsString(addedLoan));
+                }
+            } else{
+                ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
+            }
         }else{
-            ctx.json(mapper.writeValueAsString(addedLoan));
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
         }
     }
 
     public void updateLoanHandler(Context ctx){
+        if(authController.checkLogin(ctx)){
+            if(authController.getRole(ctx) == 1){
+                int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
+                LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
+
+                Loan loan = new Loan();
+                loan.setLoanId(loanId);
+                loan.setUserId(req.getUserId());
+                loan.setAmountRequested(req.getAmountRequested());
+                loan.setLoanType(req.getLoanType());
+                loan.setStatus(req.getStatus());
+                loan.setApprovedDate(req.getApprovedDate());
+                loan.setRejectionReason(req.getRejectionReason());
+
+                loanService.updateLoan(loan);
+                ctx.status(200).json("{\"message\":\"Loan updated\"}");
+            }else {
+                ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
+            }
+        } else{
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
+        }
+    }
+
+    public void getLoanInfoWithIdHandler(Context ctx){
+        int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
+        Loan loan = loanService.getLoanInfoWithId(loanId);
+        if(loan == null){
+            ctx.status(404).json("{\"message\":\"Loan not found\"}");
+        } else {
+            ctx.json(loan);
+        }
+    }
+
+    public void updateStatusHandler(Context ctx){
         int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
         LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
 
@@ -43,18 +95,7 @@ public class LoanController {
         loan.setApprovedDate(req.getApprovedDate());
         loan.setRejectionReason(req.getRejectionReason());
 
-        loanService.updateLoan(loan);
+        loanService.updateStatus(loan);
         ctx.status(200).json("{\"message\":\"Loan updated\"}");
-
-    }
-
-    public void getLoanInfoWithIdHandler(Context ctx){
-        int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
-        Loan loan = loanService.getLoanInfoWithId(loanId);
-        if(loan == null){
-            ctx.status(404).json("{\"message\":\"Loan not found\"}");
-        } else {
-            ctx.json(loan);
-        }
     }
 }

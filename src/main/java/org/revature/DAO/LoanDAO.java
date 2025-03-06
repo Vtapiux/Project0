@@ -10,7 +10,9 @@ import java.util.*;
 
 public class LoanDAO {
 
+
     public List<Loan> getAllLoans(){
+
         Connection connection = ConnectionUtil.getConnection();
         List<Loan> loans = new ArrayList<>();
 
@@ -114,10 +116,10 @@ public class LoanDAO {
         return loan;
     }
 
-    public void approveLoan (Loan loan){
+    public void updateStatus (Loan loan){
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "UPDATE Loan SET status = ?, rejection_reason = ?, approved WHERE loan_id = ?;";
+            String sql = "UPDATE Loan SET status = ?, rejection_reason = ? WHERE loan_id = ?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, loan.getStatus());
             stmt.setString(2, loan.getStatus());
