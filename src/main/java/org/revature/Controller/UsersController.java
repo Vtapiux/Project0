@@ -9,10 +9,15 @@ import org.revature.DTO.UserDTO;
 import org.revature.Model.Account; //User role validation
 import org.revature.Model.Users;
 import org.revature.Service.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class UsersController {
+    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
+
     UsersService usersService;
     AuthController authController;
 
@@ -92,6 +97,7 @@ public class UsersController {
 
                     usersService.updateUser(user);
                     ctx.status(200).json("{\"message\":\"User updated\"}");
+                    logger.info("User {} - {} updated ", request.getUserId(), request.getFirstName());
                 }else { //check same user else
                     ctx.status(403).json("{\"error\":\"You do not have access to this user.\"}");
                 }

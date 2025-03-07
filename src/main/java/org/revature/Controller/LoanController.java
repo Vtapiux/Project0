@@ -6,10 +6,14 @@ import io.javalin.http.Context;
 import org.revature.DTO.LoanDTO;
 import org.revature.Model.Loan;
 import org.revature.Service.LoanService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class LoanController {
+    private static final Logger logger = LoggerFactory.getLogger(LoanController.class);
+
     private LoanService loanService;
     private AuthController authController;
 
@@ -43,6 +47,7 @@ public class LoanController {
                     ctx.status(400);
                 }else{
                     ctx.json(mapper.writeValueAsString(addedLoan));
+                    logger.info("User {} created loan {}", loan.getUserId(), loan.getLoanId());
                 }
             } else{
                 ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
@@ -128,8 +133,10 @@ public class LoanController {
 
                 loanService.updateStatus(loan);
                 ctx.status(200).json("{\"message\":\"Loan updated\"}");
+                logger.info("Manager {} updated status of loan {}", loan.getUserId(), loan.getLoanId());
             }else{
                 ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
+                logger.warn("User {} tried updating status (Manager only action)", authController.getUserID(ctx));
             }
         }else{
             ctx.status(401).json("{\"error\":\"Not logged in\"}");

@@ -51,6 +51,7 @@ public class AuthController{
         Account accountRegister = authService.registerUser(reqAccount.getUsername(), reqAccount.getPassword(), reqAccount.getRoleId());
         if(accountRegister != null){
             ctx.status(201).json("{\"message\":\"Account registered\", \"account_id\":" + accountRegister.getAccount_id() + "}");
+            logger.info("New account register: {}", reqAccount.getUsername());
         } else {
             ctx.status(500).json("{\"error\":\"Failed to register account\"}");
         }
@@ -91,11 +92,13 @@ public class AuthController{
     }
 
     public void logout(Context ctx) {
+        Account reqAccount = ctx.bodyAsClass(Account.class);
         HttpSession session = ctx.req().getSession(false);
         if (session != null) {
             session.invalidate();
         }
         ctx.status(200).json("{\"message\":\"Logged out\"}");
+        logger.info("{} logged out", reqAccount.getUsername());
         //authService.logout(ctx);
     }
 
