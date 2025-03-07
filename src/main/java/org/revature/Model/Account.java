@@ -9,7 +9,6 @@ public class Account {
     public int getAccount_id() {
         return accountId;
     }
-
     public void setAccount_id(int account_id) {
         this.accountId = account_id;
     }
@@ -17,7 +16,6 @@ public class Account {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -25,7 +23,6 @@ public class Account {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -33,8 +30,8 @@ public class Account {
     public int getRoleId() {
         return roleId;
     }
-
     public void setRoleId(int roleId) {
         this.roleId = roleId;
     }
+
 }

@@ -95,8 +95,19 @@ public class UsersController {
                 }else { //check same user else
                     ctx.status(403).json("{\"error\":\"You do not have access to this user.\"}");
                 }
-            }else { // check role else -> manager cant modify this information
-                ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
+            }else { // check role else -> manager can modify any user info
+                int userId = Integer.parseInt(ctx.pathParam("userId"));
+                UserDTO request = ctx.bodyAsClass(UserDTO.class);
+
+                Users user = new Users();
+                user.setUserId(userId);
+                user.setFirstName(request.getFirstName());
+                user.setLastName(request.getLastName());
+                user.setEmail(request.getEmail());
+                user.setPhoneNumber(request.getPhoneNumber());
+
+                usersService.updateUser(user);
+                ctx.status(200).json("{\"message\":\"User updated\"}");
             }
         } else { //check login else
             ctx.status(401).json("{\"error\":\"Not logged in\"}");
