@@ -62,9 +62,5 @@ public class Main {
 
         app.post("/address", addressController::addAddressHandler);
 
-        //app.post("/payment", paymentController::createPaymentHandler);
-        //app.get("/payment", paymentController::getAllPaymentHandler);
-        //app.get("/payment/{paymentId}", paymentController::getPaymentWithIdHandler);
-
     }
 }
