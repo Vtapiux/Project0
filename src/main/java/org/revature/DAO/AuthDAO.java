@@ -105,18 +105,5 @@ public class AuthDAO {
             return null;
         }
     }
-
-    public boolean checkLogin(Context ctx) {
-        return true;
-    }
-
-    public void login(Context ctx) {
-    }
-
-    public void register(Context ctx) {
-    }
-
-    public void logout(Context ctx) {
-    }
 }
 

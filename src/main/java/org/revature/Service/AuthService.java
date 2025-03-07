@@ -15,14 +15,6 @@ public class AuthService {
         this.authDAO = authDAO;
     }
 
-    public boolean checkLogin(Context ctx){
-        return authDAO.checkLogin(ctx);
-    }
-
-    public void logout (Context ctx){
-        authDAO.logout(ctx);
-    }
-
     public boolean accountExists(String username){
         return authDAO.accountExists(username);
     }
@@ -47,5 +39,13 @@ public class AuthService {
         newAcc.setRoleId(roleId);
 
         return authDAO.createAccount(newAcc);
+    }
+
+    public boolean loginAccount(String username, String password) {
+        Account existingAcc = authDAO.getAccountFromDB(username);
+        if(existingAcc == null){
+            return false; //user not found
+        }
+        return existingAcc.getPassword().equals(password);
     }
 }

@@ -2,6 +2,7 @@ package org.revature.Controller;
 import io.javalin.http.Context;
 import jakarta.servlet.http.HttpSession;
 import org.revature.DAO.AuthDAO;
+import org.revature.DTO.AuthDTO;
 import org.revature.Model.Account;
 import org.revature.Model.Loan;
 import org.revature.Model.Users;
@@ -57,11 +58,14 @@ public class AuthController{
 
     public void login(Context ctx){
         Account reqAccount = ctx.bodyAsClass(Account.class);
+        AuthDTO account = ctx.bodyAsClass(AuthDTO.class);
 
-        if (reqAccount.getUsername() == null || reqAccount.getPassword() == null) {
+        if (account.getUsername() == null || account.getPassword() == null) {
             ctx.status(400).json("{\"error\":\"Missing username or password\"}");
             return;
         }
+
+        boolean success = authService.loginAccount(account.getUsername(),account.getPassword());
 
         // Check credentials. dbUser makes it clear we got this data from the db after verifying with the requestUser.
         Account dbAccount = authService.getAccountFromDB(reqAccount.getUsername());
@@ -92,14 +96,14 @@ public class AuthController{
             session.invalidate();
         }
         ctx.status(200).json("{\"message\":\"Logged out\"}");
-        authService.logout(ctx);
+        //authService.logout(ctx);
     }
 
     public boolean checkLogin(Context ctx) {
         HttpSession session = ctx.req().getSession(false);
         if (session != null && session.getAttribute("account") != null) {
             ctx.status(200).json("{\"message\":\"You are logged in\"}");
-            authService.checkLogin(ctx);
+            //authService.checkLogin(ctx);
             return true;
         } else {
             ctx.status(401).json("{\"error\":\"Not logged in\"}");
