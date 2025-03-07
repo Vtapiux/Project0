@@ -54,7 +54,7 @@ public class AddressController {
             if(address.getAddressId() == authController.getAddressId(ctx)){
                 ctx.json(address);
             } else{
-                ctx.status(404).json("{\"message\":\"You do not own this loan.\"}");
+                ctx.status(404).json("{\"message\":\"You do not own this address.\"}");
             }
         }else{
             ctx.status(401).json("{\"error\":\"Not logged in\"}");

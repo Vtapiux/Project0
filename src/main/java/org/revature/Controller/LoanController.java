@@ -132,10 +132,10 @@ public class LoanController {
                 loan.setApprovedDate(req.getApprovedDate());
                 loan.setRejectionReason(req.getRejectionReason());
 
-                loanService.updateStatus(loan, loan.getApprovedBy());
+                loanService.updateStatus(loan, authController.getUserID(ctx));
 
                 ctx.status(200).json("{\"message\":\"Loan updated\"}");
-                logger.info("Manager {} updated status of loan {}", loan.getApprovedBy(), loan.getLoanId());
+                logger.info("Manager {} updated status of loan {}", authController.getUserID(ctx), loan.getLoanId());
             }else{
                 ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
                 logger.warn("User {} tried updating status (Manager only action)", authController.getUserID(ctx));

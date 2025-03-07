@@ -49,8 +49,8 @@ public class Main {
         app.get("/check", authController::checkLogin);
         app.post("/auth/logout", authController::logout);
 
-        app.get("/users", usersController::getAllUsersHandler); //See all users
 
+        app.get("/users", usersController::getAllUsersHandler); //See all users
         app.get("/user/{userId}", usersController::getUserInfoWithIdHandler); //See specific user
         app.put("/users/{userId}", usersController::updateUserHandler); //Update user
 

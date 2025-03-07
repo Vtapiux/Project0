@@ -68,8 +68,6 @@ public class AuthController{
             return;
         }
 
-        //boolean success = authService.loginAccount(account.getUsername(),account.getPassword());
-
         // Check credentials. dbUser makes it clear we got this data from the db after verifying with the requestUser.
         Account dbAccount = authService.getAccountFromDB(reqAccount.getUsername());
 
