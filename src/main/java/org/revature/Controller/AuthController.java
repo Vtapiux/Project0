@@ -47,9 +47,9 @@ public class AuthController{
             return;
         }
 
-        int accountId = authService.createAccountInDB(reqAccount);
-        if(accountId > 0){
-            ctx.status(201).json("{\"message\":\"Account registered\", \"account_id\":" + accountId + "}");
+        Account accountRegister = authService.registerUser(reqAccount.getUsername(), reqAccount.getPassword(), reqAccount.getRoleId());
+        if(accountRegister != null){
+            ctx.status(201).json("{\"message\":\"Account registered\", \"account_id\":" + accountRegister.getAccount_id() + "}");
         } else {
             ctx.status(500).json("{\"error\":\"Failed to register account\"}");
         }
@@ -115,14 +115,6 @@ public class AuthController{
         return -1;
     }
 
-    public int getAccountId(Context ctx){
-        HttpSession session = ctx.req().getSession(false);
-        if(session != null && session.getAttribute("accountId") != null){
-            return (int) session.getAttribute("accountId");
-        }
-        return -1;
-    }
-
     public int getUserID(Context ctx){
         HttpSession session = ctx.req().getSession(false);
         if(session != null && session.getAttribute("accountId") != null){
@@ -132,35 +124,5 @@ public class AuthController{
         }
         return -1;
     }
-
-//    public Loan getLoanID(Context ctx){
-//        HttpSession session = ctx.req().getSession(false);
-//        if(session != null && session.getAttribute("loanId") != null){
-//            int loanId = (int) session.getAttribute("loanId");
-//            return loanService.getLoanByUserId(loanId);
-//        }
-//        return null;
-//    }
-
-
-//    public void login(Context ctx){
-//        authService.login(ctx);
-//    }
-
-//    public void register(Context ctx){
-//        authService.register(ctx);
-//    }
-
-//    public void logout (Context ctx){
-//        authService.logout(ctx);
-//    }
-
-//    public boolean checkLogin(Context ctx){
-//        return authService.checkLogin(ctx);
-//    }
-
-//    public int getRole (Context ctx){return authService.getRole(ctx);}
-
-//    public int getAccountId(Context ctx){return authService.getAccountId(ctx);}
 
 }

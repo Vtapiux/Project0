@@ -1,11 +1,8 @@
 package org.revature.DAO;
 
-import jakarta.servlet.http.HttpSession;
 import org.revature.Model.Account;
 import io.javalin.http.Context;
 import org.revature.Util.ConnectionUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,7 +58,7 @@ public class AuthDAO {
         //return user;
     }
 
-    public int createAccountInDB(Account account) {
+    public Account createAccount(Account account) {
         String sql = "INSERT INTO Account (username, password, role_id) VALUES (?, ?, ?);";
         Connection connection = ConnectionUtil.getConnection();
 
@@ -76,13 +73,14 @@ public class AuthDAO {
             if (rs.next()) {
                 int accId = rs.getInt(1);
                 this.createEmptyUserProfile(accId);
-                return accId;
+                //return accId;
+                account.setAccount_id(accId);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1;
+        return account;
     }
 
     public Account getAccountFromDB(String username){
@@ -111,7 +109,6 @@ public class AuthDAO {
     public boolean checkLogin(Context ctx) {
         return true;
     }
-
 
     public void login(Context ctx) {
     }
