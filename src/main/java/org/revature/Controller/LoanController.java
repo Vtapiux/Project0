@@ -74,7 +74,7 @@ public class LoanController {
                 }else{
                     ctx.status(404).json("{\"message\":\"You do not own this loan.\"}");
                 }
-            }else{
+            }else{ //Manager
                 LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
                 Loan loan = new Loan();
                 loan.setLoanId(loanId);
@@ -94,12 +94,20 @@ public class LoanController {
     }
 
     public void getLoanInfoWithIdHandler(Context ctx){
-        int loanId = Integer.parseInt(ctx.pathParam("loanId"));
-        Loan loan = loanService.getLoanInfoWithId(loanId);
-        if(loan == null){
-            ctx.status(404).json("{\"message\":\"Loan not found\"}");
-        } else {
-            ctx.json(loan);
+        if(authController.checkLogin(ctx)){
+            int loanId = Integer.parseInt(ctx.pathParam("loanId"));
+            Loan loan = loanService.getLoanInfoWithId(loanId);
+            if(authController.getRole(ctx) == 1){ //Customer
+                if(loan.getUserId() == authController.getUserID(ctx)){
+                    ctx.json(loan);
+                } else{
+                    ctx.status(404).json("{\"message\":\"You do not own this loan.\"}");
+                }
+            }else{ //Manager
+                ctx.json(loan);
+            }
+        }else{
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
         }
     }
 
