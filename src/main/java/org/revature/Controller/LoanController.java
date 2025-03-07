@@ -7,6 +7,8 @@ import org.revature.DTO.LoanDTO;
 import org.revature.Model.Loan;
 import org.revature.Service.LoanService;
 
+import java.util.List;
+
 public class LoanController {
     private LoanService loanService;
     private AuthController authController;
@@ -21,7 +23,9 @@ public class LoanController {
             if(authController.getRole(ctx) == 2){ //Only manager can see ALL loans
                 ctx.json(loanService.getAllLoans());
             }else {
-                ctx.status(403).json("{\"error\":\"\"You do not have permission to perform this action.\"\"}");
+                int userId = authController.getUserID(ctx);
+                ctx.json(loanService.getUserLoans(userId));
+                //ctx.status(403).json("{\"error\":\"\"You do not have permission to perform this action.\"\"}");
             }
         }else{
             ctx.status(401).json("{\"error\":\"Not logged in\"}");
@@ -33,7 +37,8 @@ public class LoanController {
             if(authController.getRole(ctx) == 1){ //Only normal users can create a loan
                 ObjectMapper mapper = new ObjectMapper();
                 Loan loan = mapper.readValue(ctx.body(), Loan.class);
-                Loan addedLoan = loanService.addLoan(loan);
+                int userId = authController.getUserID(ctx);
+                Loan addedLoan = loanService.addLoan(loan, userId);
                 if(addedLoan==null){
                     ctx.status(400);
                 }else{
@@ -49,10 +54,28 @@ public class LoanController {
 
     public void updateLoanHandler(Context ctx){
         if(authController.checkLogin(ctx)){
-            if(authController.getRole(ctx) == 1){
-                int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
-                LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
+            // both manager and customer can update their loans
+            int loanId = Integer.parseInt(ctx.pathParam("loanId"));
+            Loan loanUp = loanService.getLoanInfoWithId(loanId);
+            if(authController.getRole(ctx) == 1){ //Customer
+                if(loanUp.getUserId() == authController.getUserID(ctx)){ //The user match with the loan to edit
+                    LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
+                    Loan loan = new Loan();
+                    loan.setLoanId(loanId);
+                    loan.setUserId(authController.getUserID(ctx));
+                    loan.setAmountRequested(req.getAmountRequested());
+                    loan.setLoanType(req.getLoanType());
+                    loan.setStatus(req.getStatus());
+                    loan.setApprovedDate(req.getApprovedDate());
+                    loan.setRejectionReason(req.getRejectionReason());
 
+                    loanService.updateLoan(loan);
+                    ctx.status(200).json("{\"message\":\"Loan updated\"}");
+                }else{
+                    ctx.status(404).json("{\"message\":\"You do not own this loan.\"}");
+                }
+            }else{
+                LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
                 Loan loan = new Loan();
                 loan.setLoanId(loanId);
                 loan.setUserId(req.getUserId());
@@ -64,8 +87,6 @@ public class LoanController {
 
                 loanService.updateLoan(loan);
                 ctx.status(200).json("{\"message\":\"Loan updated\"}");
-            }else {
-                ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
             }
         } else{
             ctx.status(401).json("{\"error\":\"Not logged in\"}");
@@ -73,7 +94,7 @@ public class LoanController {
     }
 
     public void getLoanInfoWithIdHandler(Context ctx){
-        int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
+        int loanId = Integer.parseInt(ctx.pathParam("loanId"));
         Loan loan = loanService.getLoanInfoWithId(loanId);
         if(loan == null){
             ctx.status(404).json("{\"message\":\"Loan not found\"}");
@@ -83,19 +104,27 @@ public class LoanController {
     }
 
     public void updateStatusHandler(Context ctx){
-        int loanId = Integer.parseInt(ctx.pathParam("loan_id"));
-        LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
+        if(authController.checkLogin(ctx)){
+            if(authController.getRole(ctx) == 2){
+                int loanId = Integer.parseInt(ctx.pathParam("loanId"));
+                LoanDTO req = ctx.bodyAsClass(LoanDTO.class);
 
-        Loan loan = new Loan();
-        loan.setLoanId(loanId);
-        loan.setUserId(req.getUserId());
-        loan.setAmountRequested(req.getAmountRequested());
-        loan.setLoanType(req.getLoanType());
-        loan.setStatus(req.getStatus());
-        loan.setApprovedDate(req.getApprovedDate());
-        loan.setRejectionReason(req.getRejectionReason());
+                Loan loan = new Loan();
+                loan.setLoanId(loanId);
+                loan.setUserId(req.getUserId());
+                loan.setAmountRequested(req.getAmountRequested());
+                loan.setLoanType(req.getLoanType());
+                loan.setStatus(req.getStatus());
+                loan.setApprovedDate(req.getApprovedDate());
+                loan.setRejectionReason(req.getRejectionReason());
 
-        loanService.updateStatus(loan);
-        ctx.status(200).json("{\"message\":\"Loan updated\"}");
+                loanService.updateStatus(loan);
+                ctx.status(200).json("{\"message\":\"Loan updated\"}");
+            }else{
+                ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
+            }
+        }else{
+            ctx.status(401).json("{\"error\":\"Not logged in\"}");
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.revature.DAO;
 
 import org.revature.Model.Loan;
+import org.revature.Model.Users;
 import org.revature.Util.ConnectionUtil;
 
 import java.sql.*;
@@ -10,6 +11,38 @@ import java.util.*;
 
 public class LoanDAO {
 
+    public List<Loan> getUserLoans(int userId){
+
+        Connection connection = ConnectionUtil.getConnection();
+        List<Loan> loans = new ArrayList<>();
+
+        try{
+            String sql = "SELECT * FROM LOAN WHERE user_id = ?;";
+
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+                Date sqlDate = rs.getDate("applied_date");
+                LocalDate appliedDate = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+
+                Loan loan = new Loan(rs.getInt("loan_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("approved_by"),
+                        rs.getInt("amount_requested"),
+                        rs.getString("loan_type"),
+                        rs.getString("status"),
+                        appliedDate,
+                        rs.getObject("approved_date",LocalDate.class),
+                        rs.getString("rejection_reason"));
+                loans.add(loan);
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return loans;
+    }
 
     public List<Loan> getAllLoans(){
 
@@ -43,14 +76,14 @@ public class LoanDAO {
         return loans;
     }
 
-    public Loan insertLoan(Loan loan){
+    public Loan insertLoan(Loan loan, int userId){
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "INSERT INTO LOAN (user_id, amount_requested, loan_type) VALUES (?, ?, ?);";
+            String sql = "INSERT INTO LOAN (user_id, amount_requested, loan_type, applied_date) VALUES (?, ?, ?, default);";
 
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            stmt.setInt(1,loan.getUserId());
+            stmt.setInt(1,userId);
             stmt.setInt(2, loan.getAmountRequested());
             stmt.setString(3, loan.getLoanType());
 
@@ -97,8 +130,8 @@ public class LoanDAO {
 
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                Date sqlDate = rs.getDate("applied_date");
-                LocalDate appliedDate = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+//                Date sqlDate = rs.getDate("applied_date");
+//                LocalDate appliedDate = (sqlDate != null) ? sqlDate.toLocalDate() : null;
 
                  loan = new Loan(rs.getInt("loan_id"),
                         rs.getInt("user_id"),
@@ -106,7 +139,7 @@ public class LoanDAO {
                         rs.getInt("amount_requested"),
                         rs.getString("loan_type"),
                         rs.getString("status"),
-                        appliedDate,
+                        rs.getDate("applied_date").toLocalDate(),
                         rs.getObject("approved_date",LocalDate.class),
                         rs.getString("rejection_reason"));
             }
@@ -119,14 +152,42 @@ public class LoanDAO {
     public void updateStatus (Loan loan){
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "UPDATE Loan SET status = ?, rejection_reason = ? WHERE loan_id = ?;";
+            String sql = "UPDATE Loan SET status = ?, rejection_reason = ?, approved_date = ? WHERE loan_id = ?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, loan.getStatus());
             stmt.setString(2, loan.getStatus());
-            stmt.setInt(3, loan.getLoanId());
+            stmt.setObject(3, loan.getApprovedDate());
+            stmt.setInt(4, loan.getLoanId());
             stmt.executeUpdate();
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
     }
+
+//    public Loan getLoanByUserId(int userId) {
+//        Connection connection = ConnectionUtil.getConnection();
+//        Loan loan = null;
+//        try {
+//            String sql = "SELECT * FROM Loan WHERE user_id = ?;";
+//            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setInt(1, userId);
+//
+//            ResultSet rs = preparedStatement.executeQuery();
+//
+//            if(rs.next()){
+//                loan = new Loan(rs.getInt("loan_id"),
+//                        rs.getInt("user_id"),
+//                        rs.getInt("approved_by"),
+//                        rs.getInt("amount_requested"),
+//                        rs.getString("loan_type"),
+//                        rs.getString("status"),
+//                        rs.getDate("applied_date").toLocalDate(),
+//                        rs.getDate("approved_date").toLocalDate(),
+//                        rs.getString("rejection_reason"));
+//            }
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return loan;
+//    }
 }

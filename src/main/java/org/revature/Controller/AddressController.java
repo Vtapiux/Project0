@@ -39,7 +39,4 @@ public class AddressController {
             ctx.status(401).json("{\"error\":\"Not logged in\"}");
         }
     }
-
-
-
 }

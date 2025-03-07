@@ -16,13 +16,14 @@ public class LoanService {
         this.loanDAO = loanDAO;
     }
 
-    public Loan addLoan(Loan newLoan){
-        return loanDAO.insertLoan(newLoan);
+    public Loan addLoan(Loan newLoan, int userId){
+        return loanDAO.insertLoan(newLoan, userId);
     }
 
     public List<Loan> getAllLoans(){
         return loanDAO.getAllLoans();
     }
+    public List<Loan> getUserLoans(int userId) {return loanDAO.getUserLoans(userId);}
 
     public void updateLoan(Loan loan){
         loanDAO.updateLoan(loan);
@@ -35,4 +36,5 @@ public class LoanService {
     public void updateStatus(Loan loan){
         loanDAO.updateStatus(loan);
     }
+
 }

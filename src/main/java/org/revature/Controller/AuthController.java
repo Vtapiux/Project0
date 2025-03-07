@@ -3,26 +3,33 @@ import io.javalin.http.Context;
 import jakarta.servlet.http.HttpSession;
 import org.revature.DAO.AuthDAO;
 import org.revature.Model.Account;
+import org.revature.Model.Loan;
 import org.revature.Model.Users;
 import org.revature.Service.AuthService;
+import org.revature.Service.LoanService;
 import org.revature.Service.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class AuthController{
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private AuthService authService;
     private UsersService usersService;
+    private LoanService loanService;
 
     public AuthController(){
         this.authService = new AuthService();
         this.usersService = new UsersService();
+        this.loanService = new LoanService();
     }
 
     public AuthController (AuthService authService){
         this.authService = authService;
         this.usersService = new UsersService();
+        this.loanService = new LoanService();
     }
 
     public void register(Context ctx){
@@ -125,6 +132,15 @@ public class AuthController{
         }
         return -1;
     }
+
+//    public Loan getLoanID(Context ctx){
+//        HttpSession session = ctx.req().getSession(false);
+//        if(session != null && session.getAttribute("loanId") != null){
+//            int loanId = (int) session.getAttribute("loanId");
+//            return loanService.getLoanByUserId(loanId);
+//        }
+//        return null;
+//    }
 
 
 //    public void login(Context ctx){
