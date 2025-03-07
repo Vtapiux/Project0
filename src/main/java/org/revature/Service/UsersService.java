@@ -18,8 +18,8 @@ public class UsersService {
         return usersDAO.insertUser(user);
     }
 
-    public List<Users> getAllUsers(Account account){
-        return usersDAO.getAllUsers(account);
+    public List<Users> getAllUsers(){
+        return usersDAO.getAllUsers();
     }
 
     public void updateUser(Users user){

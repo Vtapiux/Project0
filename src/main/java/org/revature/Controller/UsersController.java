@@ -33,51 +33,14 @@ public class UsersController {
 
     public void getAllUsersHandler(Context ctx) {
         //This is extra
-        HttpSession session = ctx.req().getSession(false);
-        if (session == null || session.getAttribute("account") == null) {
+        if(authController.checkLogin(ctx)){
+            if(authController.getRole(ctx) == 2){//Is Manager
+                ctx.json(usersService.getAllUsers());
+            }else{
+                ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
+            }
+        }else { //check login else
             ctx.status(401).json("{\"error\":\"Not logged in\"}");
-            return;
-        }
-
-        Account account = (Account)session.getAttribute("account");
-        if (account.getRoleId() != 1) {
-            ctx.status(403).json("{\"error\":\"Forbidden: Insufficient permissions\"}");
-            return;
-        }
-
-        ctx.json(usersService.getAllUsers(account));
-    }
-
-
-    public void addUserHandler(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Users user = mapper.readValue(ctx.body(), Users.class);
-        Users addedUser = usersService.addUser(user);
-        if(addedUser==null){
-            ctx.status(400);
-        }else{
-            ctx.json(mapper.writeValueAsString(addedUser));
-        }
-    }
-
-    public void addUserInfoHandler(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Users user = mapper.readValue(ctx.body(), Users.class);
-
-        // Validate required fields
-        if (user.getAccountId() == 0 || user.getFirstName() == null || user.getLastName() == null) {
-            ctx.status(400).json("{\"error\":\"Missing required fields\"}");
-            return;
-        }
-
-        // Use the service to add the user
-        Users addedUser = usersService.addUser(user);
-
-        // Handle the response based on the outcome
-        if (addedUser == null) {
-            ctx.status(500).json("{\"error\":\"Failed to add user information\"}");
-        } else {
-            ctx.status(201).json("{\"message\":\"User information added\", \"userId\":" + addedUser.getUserId() + "}");
         }
     }
 

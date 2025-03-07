@@ -10,6 +10,7 @@ public class LoanDTO {
     private int amountRequested;
     private String loanType;
     private String status;
+    private int approvedBy;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate appliedDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -30,6 +31,14 @@ public class LoanDTO {
 
     public String getStatus() {return status;}
     public void setStatus(String status) {this.status = status;}
+
+    public int getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(int approvedBy) {
+        this.approvedBy = approvedBy;
+    }
 
     public LocalDate getAppliedDate() {return appliedDate;}
     public void setAppliedDate(LocalDate appliedDate) {this.appliedDate = appliedDate;}

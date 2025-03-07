@@ -1,7 +1,6 @@
 package org.revature.DAO;
 
 import org.revature.Model.Account;
-import io.javalin.http.Context;
 import org.revature.Util.ConnectionUtil;
 
 import java.sql.Connection;
@@ -74,7 +73,7 @@ public class AuthDAO {
                 int accId = rs.getInt(1);
                 this.createEmptyUserProfile(accId);
                 //return accId;
-                account.setAccount_id(accId);
+                account.setAccountId(accId);
             }
 
         } catch (SQLException e) {
@@ -83,7 +82,7 @@ public class AuthDAO {
         return account;
     }
 
-    public Account getAccountFromDB(String username){
+    public Account getAccountByUsername(String username){
         String sql = "SELECT * FROM account WHERE username = ?;";
         Connection connection = ConnectionUtil.getConnection();
         try{
@@ -93,7 +92,7 @@ public class AuthDAO {
 
             if(rs.next()){
                 Account acc = new Account();
-                acc.setAccount_id(rs.getInt("account_id"));
+                acc.setAccountId(rs.getInt("account_id"));
                 acc.setUsername(rs.getString("username"));
                 acc.setPassword(rs.getString("password"));
                 acc.setRoleId(rs.getInt("role_id"));

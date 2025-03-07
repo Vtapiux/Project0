@@ -33,8 +33,8 @@ public class LoanService {
         return loanDAO.getLoanInfoWithId(loan_id);
     }
 
-    public void updateStatus(Loan loan){
-        loanDAO.updateStatus(loan);
+    public void updateStatus(Loan loan, int approvedBy){
+        loanDAO.updateStatus(loan, approvedBy);
     }
 
 }

@@ -1,18 +1,14 @@
 package org.revature.Controller;
 import io.javalin.http.Context;
 import jakarta.servlet.http.HttpSession;
-import org.revature.DAO.AuthDAO;
 import org.revature.DTO.AuthDTO;
 import org.revature.Model.Account;
-import org.revature.Model.Loan;
 import org.revature.Model.Users;
 import org.revature.Service.AuthService;
 import org.revature.Service.LoanService;
 import org.revature.Service.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class AuthController{
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -50,7 +46,7 @@ public class AuthController{
 
         Account accountRegister = authService.registerUser(reqAccount.getUsername(), reqAccount.getPassword(), reqAccount.getRoleId());
         if(accountRegister != null){
-            ctx.status(201).json("{\"message\":\"Account registered\", \"account_id\":" + accountRegister.getAccount_id() + "}");
+            ctx.status(201).json("{\"message\":\"Account registered\", \"account_id\":" + accountRegister.getAccountId() + "}");
             logger.info("New account register: {}", reqAccount.getUsername());
         } else {
             ctx.status(500).json("{\"error\":\"Failed to register account\"}");
@@ -66,7 +62,7 @@ public class AuthController{
             return;
         }
 
-        boolean success = authService.loginAccount(account.getUsername(),account.getPassword());
+        //boolean success = authService.loginAccount(account.getUsername(),account.getPassword());
 
         // Check credentials. dbUser makes it clear we got this data from the db after verifying with the requestUser.
         Account dbAccount = authService.getAccountFromDB(reqAccount.getUsername());
@@ -75,8 +71,8 @@ public class AuthController{
             HttpSession session = ctx.req().getSession(true);
             session.setAttribute("account", dbAccount);
             session.setAttribute("roleId", dbAccount.getRoleId());
-            session.setAttribute("accountId", dbAccount.getAccount_id());
-            logger.info("User logged: {}", reqAccount.getUsername());
+            session.setAttribute("accountId", dbAccount.getAccountId());
+            logger.info("User logged: {}, Id: {}", dbAccount.getUsername(), dbAccount.getAccountId());
             ctx.status(200).json("{\"message\":\"Login successful\"}");
             return;
         }else{
@@ -92,13 +88,13 @@ public class AuthController{
     }
 
     public void logout(Context ctx) {
-        Account reqAccount = ctx.bodyAsClass(Account.class);
+        //Account reqAccount = ctx.bodyAsClass(Account.class);
         HttpSession session = ctx.req().getSession(false);
         if (session != null) {
             session.invalidate();
         }
         ctx.status(200).json("{\"message\":\"Logged out\"}");
-        logger.info("{} logged out", reqAccount.getUsername());
+        //logger.info("{} logged out", reqAccount.getUsername());
         //authService.logout(ctx);
     }
 

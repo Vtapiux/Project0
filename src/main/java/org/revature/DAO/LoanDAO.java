@@ -104,8 +104,7 @@ public class LoanDAO {
     public void updateLoan(Loan loan){
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "UPDATE Loan SET user_id = ?, amount_requested = ?, " +
-                    "loan_type = ?, " +
+            String sql = "UPDATE Loan SET user_id = ?, amount_requested = ?, loan_type = ?, " +
                     "approved_date = ?, rejection_reason = ? WHERE loan_id = ?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1,loan.getUserId());
@@ -149,15 +148,16 @@ public class LoanDAO {
         return loan;
     }
 
-    public void updateStatus (Loan loan){
+    public void updateStatus (Loan loan, int approvedBy){
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "UPDATE Loan SET status = ?, rejection_reason = ?, approved_date = ? WHERE loan_id = ?;";
+            String sql = "UPDATE Loan SET status = ?, rejection_reason = ?, approved_date = ?, approved_by = ? WHERE loan_id = ?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, loan.getStatus());
-            stmt.setString(2, loan.getStatus());
+            stmt.setString(2, loan.getRejectionReason());
             stmt.setObject(3, loan.getApprovedDate());
-            stmt.setInt(4, loan.getLoanId());
+            stmt.setInt(4, approvedBy);
+            stmt.setInt(5, loan.getLoanId());
             stmt.executeUpdate();
         }catch(SQLException e){
             System.out.println(e.getMessage());

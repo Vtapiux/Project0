@@ -13,13 +13,11 @@ import java.time.*;
 public class UsersDAO {
 
     //Only Manager
-    public List<Users> getAllUsers(Account account){
+    public List<Users> getAllUsers(){
 
         Connection connection = ConnectionUtil.getConnection();
         List<Users> users = new ArrayList<>();
-        if (account.getRoleId() != 1) {
-            throw new SecurityException("Forbidden: Insufficient permissions");
-        }
+
         try {
             String sql = "select * from Users;";
 

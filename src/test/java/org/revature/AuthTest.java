@@ -1,6 +1,5 @@
 package org.revature;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,18 +22,20 @@ public class AuthTest {
 
     @Test
     void registerAccount_ShouldReturnAccount_WhenUsernameNotExist(){
+        //If the username doesn’t exist, the account should be created and returned.
+
         String username = "alice";
         String password = "secret";
         int roleId = 1;
         Account accToReturn = new Account();
-        accToReturn.setAccount_id(1);
+        accToReturn.setAccountId(1);
         accToReturn.setUsername(username);
         accToReturn.setPassword(password);
         accToReturn.setRoleId(roleId);
 
         //when(...).thenReturn(...): Tells Mockito what to return when a specific method on the mock is called.
         // We mock getUserByUsername to return null => user doesn't exist yet
-        when(authDAOMock.getAccountFromDB(username)).thenReturn(null);
+        when(authDAOMock.getAccountByUsername(username)).thenReturn(null);
 
         // We mock createUser to return our user with an assigned ID
         when(authDAOMock.createAccount(any(Account.class))).thenReturn(accToReturn);
@@ -44,17 +45,19 @@ public class AuthTest {
 
         // Assert
         assertNotNull(createdUser);
-        assertEquals(1, createdUser.getAccount_id());
+        assertEquals(1, createdUser.getAccountId());
         assertEquals(username, createdUser.getUsername());
         assertEquals(password, createdUser.getPassword());
 
         //verify(...): Ensures a mock method was called or not called.
-        verify(authDAOMock).getAccountFromDB(username);
+        verify(authDAOMock).getAccountByUsername(username);
         verify(authDAOMock).createAccount(any(Account.class));
     }
 
     @Test
     void registerAccount_ShouldReturnNull_WheUsernameAlreadyExists(){
+        //If the username already exists, the registration should fail (return null).
+
         //Arrange
         String username = "exists";
         String password = "1234";
@@ -63,14 +66,14 @@ public class AuthTest {
         Account existingAccount = new Account();
         existingAccount.setUsername(username);
         existingAccount.setPassword(password);
-        when(authDAOMock.getAccountFromDB(username)).thenReturn(existingAccount);
+        when(authDAOMock.getAccountByUsername(username)).thenReturn(existingAccount);
 
         //Act
         Account result = authServiceMock.registerUser(username, password, roleId);
 
         //Assert
         assertNull(result, "Expected null when username already exists");
-        verify(authDAOMock).getAccountFromDB(username);
+        verify(authDAOMock).getAccountByUsername(username);
         // Notice we do NOT expect createUser(...) to be called if user already exists
         verify(authDAOMock, never()).createAccount(any(Account.class));
 
@@ -78,6 +81,8 @@ public class AuthTest {
 
     @Test
     void loginUser_ShouldReturnTrue_WhenCredentialsMatch(){
+        //If the username exists and the password matches, login should be successful.
+
         //Arrange
         String username = "bob";
         String password = "1234";
@@ -86,14 +91,14 @@ public class AuthTest {
         existingAcc.setUsername(username);
         existingAcc.setPassword(password);
 
-        when(authDAOMock.getAccountFromDB(username)).thenReturn(existingAcc);
+        when(authDAOMock.getAccountByUsername(username)).thenReturn(existingAcc);
 
         //Act
         boolean success = authServiceMock.loginAccount(username, password);
 
         //Assert
         assertTrue(success, "Login should succeed when passwords match");
-        verify(authDAOMock).getAccountFromDB(username);
+        verify(authDAOMock).getAccountByUsername(username);
 
     }
 

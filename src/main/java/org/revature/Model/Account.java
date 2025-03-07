@@ -6,11 +6,11 @@ public class Account {
     private String password;
     private int roleId;
 
-    public int getAccount_id() {
+    public int getAccountId() {
         return accountId;
     }
-    public void setAccount_id(int account_id) {
-        this.accountId = account_id;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
     }
 
     public String getUsername() {

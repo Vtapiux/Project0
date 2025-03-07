@@ -47,7 +47,7 @@ public class LoanController {
                     ctx.status(400);
                 }else{
                     ctx.json(mapper.writeValueAsString(addedLoan));
-                    logger.info("User {} created loan {}", loan.getUserId(), loan.getLoanId());
+                    logger.info("User {} created loan {}", authController.getUserID(ctx), loan.getLoanId());
                 }
             } else{
                 ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
@@ -126,14 +126,16 @@ public class LoanController {
                 loan.setLoanId(loanId);
                 loan.setUserId(req.getUserId());
                 loan.setAmountRequested(req.getAmountRequested());
+                loan.setApprovedBy(req.getApprovedBy());
                 loan.setLoanType(req.getLoanType());
                 loan.setStatus(req.getStatus());
                 loan.setApprovedDate(req.getApprovedDate());
                 loan.setRejectionReason(req.getRejectionReason());
 
-                loanService.updateStatus(loan);
+                loanService.updateStatus(loan, loan.getApprovedBy());
+
                 ctx.status(200).json("{\"message\":\"Loan updated\"}");
-                logger.info("Manager {} updated status of loan {}", loan.getUserId(), loan.getLoanId());
+                logger.info("Manager {} updated status of loan {}", loan.getApprovedBy(), loan.getLoanId());
             }else{
                 ctx.status(403).json("{\"error\":\"You do not have permission to perform this action.\"}");
                 logger.warn("User {} tried updating status (Manager only action)", authController.getUserID(ctx));
