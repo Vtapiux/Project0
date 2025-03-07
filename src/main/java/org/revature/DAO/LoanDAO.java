@@ -17,7 +17,7 @@ public class LoanDAO {
         List<Loan> loans = new ArrayList<>();
 
         try{
-            String sql = "SELECT * FROM LOAN WHERE user_id = ?;";
+            String sql = "SELECT * FROM LOAN WHERE user_id = ? ORDER BY loan_id ASC;";
 
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, userId);
@@ -50,7 +50,7 @@ public class LoanDAO {
         List<Loan> loans = new ArrayList<>();
 
         try{
-            String sql = "SELECT * FROM LOAN;";
+            String sql = "SELECT * FROM LOAN ORDER BY loan_id ASC;";
 
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -123,7 +123,7 @@ public class LoanDAO {
         Connection connection = ConnectionUtil.getConnection();
         Loan loan = null;
         try{
-            String sql = "SELECT * FROM LOAN WHERE loan_id = ?;";
+            String sql = "SELECT * FROM LOAN WHERE loan_id = ? ORDER BY loan_id ASC;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, loanId);
 

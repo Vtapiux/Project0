@@ -60,7 +60,7 @@ public class UsersController {
 
                     usersService.updateUser(user);
                     ctx.status(200).json("{\"message\":\"User updated\"}");
-                    logger.info("User {} - {} updated ", request.getUserId(), request.getFirstName());
+                    logger.info("User {} - {} updated ", authController.getUserID(ctx), request.getFirstName());
                 }else { //check same user else
                     ctx.status(403).json("{\"error\":\"You do not have access to this user.\"}");
                 }

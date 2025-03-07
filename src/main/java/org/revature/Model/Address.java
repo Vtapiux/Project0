@@ -9,6 +9,18 @@ public class Address {
     private int streetNum;
     private String zip;
 
+    public Address(){    }
+
+    public Address(int addressId, String country, String state, String city, String street, int streetNum, String zip) {
+        this.addressId = addressId;
+        this.country = country;
+        this.state = state;
+        this.city = city;
+        this.street = street;
+        this.streetNum = streetNum;
+        this.zip = zip;
+    }
+
     public int getAddressId() {return addressId;}
     public void setAddressId(int addressId) {this.addressId = addressId;}
 

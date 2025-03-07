@@ -14,10 +14,6 @@ public class UsersService {
 
     public UsersService( UsersDAO usersDAO ){ this.usersDAO = usersDAO; }
 
-    public Users addUser(Users user){
-        return usersDAO.insertUser(user);
-    }
-
     public List<Users> getAllUsers(){
         return usersDAO.getAllUsers();
     }

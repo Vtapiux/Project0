@@ -3,7 +3,9 @@ import io.javalin.http.Context;
 import jakarta.servlet.http.HttpSession;
 import org.revature.DTO.AuthDTO;
 import org.revature.Model.Account;
+import org.revature.Model.Address;
 import org.revature.Model.Users;
+import org.revature.Service.AddressService;
 import org.revature.Service.AuthService;
 import org.revature.Service.LoanService;
 import org.revature.Service.UsersService;
@@ -16,17 +18,21 @@ public class AuthController{
     private AuthService authService;
     private UsersService usersService;
     private LoanService loanService;
+    private AddressService addressService;
 
     public AuthController(){
         this.authService = new AuthService();
         this.usersService = new UsersService();
         this.loanService = new LoanService();
+        this.addressService = new AddressService();
     }
 
     public AuthController (AuthService authService){
         this.authService = authService;
         this.usersService = new UsersService();
         this.loanService = new LoanService();
+        this.addressService = new AddressService();
+
     }
 
     public void register(Context ctx){
@@ -124,6 +130,16 @@ public class AuthController{
            int accountId = (int) session.getAttribute("accountId");
             Users users = usersService.getUserByAccountId(accountId);
             return users.getUserId();
+        }
+        return -1;
+    }
+
+    public int getAddressId(Context ctx){
+        HttpSession session = ctx.req().getSession(false);
+        if(session != null && session.getAttribute("accountId") != null){
+            int accountId = (int) session.getAttribute("accountId");
+            Users users = usersService.getUserByAccountId(accountId);
+            return users.getAddressId();
         }
         return -1;
     }

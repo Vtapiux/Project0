@@ -60,7 +60,9 @@ public class Main {
         app.put("/loans/{loanId}", loanController::updateLoanHandler); //update loan
         app.put("/loan/{loanId}/status", loanController::updateStatusHandler); //Update loan status
 
-        app.post("/address", addressController::addAddressHandler);
+        app.get("/address", addressController::getAllAddressHandler);
+        app.get("/address/{addressId}", addressController::getAddressWithIdHandler);
+        app.put("/address/{addressId}", addressController::updateAddressHandler);
 
     }
 }

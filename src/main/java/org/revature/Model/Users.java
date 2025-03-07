@@ -10,8 +10,8 @@ public class Users {
     private String lastName;
     private String email;
     private String phoneNumber;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate createdAt;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+//    private LocalDate createdAt;
     private int addressId;
     private int accountId;
 
@@ -77,12 +77,12 @@ public class Users {
         this.phoneNumber = phoneNumber;
     }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public LocalDate getCreatedAt() {
+//        return createdAt;
+//    }
+//    public void setCreatedAt(LocalDate createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     public int getAddressId() {
         return addressId;

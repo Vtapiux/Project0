@@ -41,7 +41,33 @@ public class AuthDAO {
         }
     }
 
-    //public Users createEmptyUserProfile(int accountId, Users user){
+    public void updateAddressIdInUsers(int addressId){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "UPDATE Users SET address_id = ? WHERE user_id = ?;";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, addressId);
+            stmt.setInt(2, addressId);
+            stmt.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void createEmptyAddress(int Id){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "INSERT INTO Address (country) VALUES (null);";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.executeUpdate();
+            this.updateAddressIdInUsers(Id);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     public void createEmptyUserProfile(int accountId) {
         String sql = "INSERT INTO Users (account_id) VALUES (?);";
         Connection connection = ConnectionUtil.getConnection();
@@ -50,11 +76,10 @@ public class AuthDAO {
             stmt.setInt(1, accountId);
 
             stmt.executeUpdate();
-
+            this.createEmptyAddress(accountId);
         }catch(SQLException e){
             e.printStackTrace();
         }
-        //return user;
     }
 
     public Account createAccount(Account account) {

@@ -19,7 +19,7 @@ public class UsersDAO {
         List<Users> users = new ArrayList<>();
 
         try {
-            String sql = "select * from Users;";
+            String sql = "select * from Users ORDER BY user_id ASC;";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
@@ -43,33 +43,6 @@ public class UsersDAO {
             System.out.println(e.getMessage());
         }
         return users;
-    }
-
-    //Each user
-    public Users insertUser(Users user){
-        Connection connection = ConnectionUtil.getConnection();
-        try{
-            String sql = "INSERT INTO Users (first_name, last_name, email, phone_number, account_id) VALUES (?, ?, ?, ?, ?);";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getPhoneNumber());
-            preparedStatement.setInt(5, user.getAccountId());
-
-            preparedStatement.executeUpdate();
-
-            try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
-                if(generatedKeys.next()) {
-                    int newId = generatedKeys.getInt(1);
-                    user.setUserId(newId);
-                }
-            }
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-        return user;
     }
 
     //Each user
